@@ -87,14 +87,14 @@ RSpec.describe ApiErrorHandler::ErrorReporter do
 
     it "Reports to Appsignal with an error id" do
       stub_const("Appsignal", double)
-      expect(Appsignal).to receive(:set_error).with(error, context: { error_id: "456" })
+      expect(Appsignal).to receive(:send_error).with(error)
 
       reporter.report(error, error_id: "456")
     end
 
     it "Reports to Appsignal without an error id" do
       stub_const("Appsignal", double)
-      expect(Appsignal).to receive(:set_error).with(error, context: {})
+      expect(Appsignal).to receive(:send_error).with(error)
 
       reporter.report(error)
     end

@@ -27,8 +27,7 @@ module ApiErrorHandler
       elsif @strategy == :appsignal
         raise_dependency_error(missing_constant: "Appsignal") unless defined?(Appsignal)
 
-        context = error_id ? { error_id: error_id } : {}
-        Appsignal.set_error(error, context: context)
+        Appsignal.send_error(error)
       else
         raise(
           InvalidOptionError,
