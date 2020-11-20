@@ -24,6 +24,11 @@ module ApiErrorHandler
 
         extra = error_id ? { error_id: error_id } : {}
         Raven.capture_exception(error, extra: extra)
+      elsif @strategy == :appsignal
+        raise_dependency_error(missing_constant: "Appsignal") unless defined?(Appsignal)
+
+        context = error_id ? { error_id: error_id } : {}
+        Appsignal.set_error(error, context: context)
       else
         raise(
           InvalidOptionError,

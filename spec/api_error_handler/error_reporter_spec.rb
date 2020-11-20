@@ -77,4 +77,26 @@ RSpec.describe ApiErrorHandler::ErrorReporter do
       reporter.report(error)
     end
   end
+
+  context "using the :appsignal strategy" do
+    let(:reporter) { described_class.new(:appsignal) }
+
+    it "Raises an error if the Appsignal constant is not defined" do
+      expect { reporter.report(error) }.to raise_error(ApiErrorHandler::MissingDependencyError)
+    end
+
+    it "Reports to Appsignal with an error id" do
+      stub_const("Appsignal", double)
+      expect(Appsignal).to receive(:set_error).with(error, context: { error_id: "456" })
+
+      reporter.report(error, error_id: "456")
+    end
+
+    it "Reports to Appsignal without an error id" do
+      stub_const("Appsignal", double)
+      expect(Appsignal).to receive(:set_error).with(error, context: {})
+
+      reporter.report(error)
+    end
+  end
 end
